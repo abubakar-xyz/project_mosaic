@@ -54,6 +54,9 @@ def build_graph(disable_models=None, physical_gate_capacity=1.0):
     # Capacity derived from Gretton et al. (2024), PNAS Nexus 3(4), pgae126.
     # FBI-authorized red-team: 36/38 commercial DNA synthesis providers shipped
     # 1918 influenza fragments without identity verification. 36/38 = 0.947 ≈ 0.94.
+    # Note: For unregulated benchtop synthesizers lacking any screening firmware, 
+    # this capacity effectively approaches 1.0 — meaning the 0.94 baseline 
+    # represents a conservative lower bound for the threat scenario this paper addresses.
     G.add_edge('Execution', 'Physical_Gate', capacity=0.94)
 
     # ---- 5. Physical Gate → Sink ----
