@@ -96,6 +96,6 @@ if __name__ == "__main__":
                    physical_gate_capacity=0.05)
 
     print("\n" + "=" * 60)
-    print("The digital ecosystem reroutes around single-model patches.")
-    print("Only the physical gate is the true Minimum Cut.")
+    print("The graph model illustrates that given a fully-connected handoff layer, single-node patching cannot shift the minimum cut.")
+    print("Our empirical 3x3 data confirms the fully-connected assumption holds in practice.")
     print("=" * 60)

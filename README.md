@@ -31,10 +31,10 @@ Current biosecurity evaluations often suffer from the "Single-Node Illusion." If
 
 Our contribution is `screener.py`, a two-layer lightweight screener demonstrating our evaluation baseline. **All screening results are against a simplified model only, not a formal analysis of Twist or IDT commercial workflows.**
 
-| Layer | Method | Evasion Success Rate (Out of 9 Trials*) |
-| :--- | :--- | :---: |
-| **Layer 1: DNA Check** | Sliding-window Hamming distance on raw `.txt` sequence | **100% bypassed** |
-| **Layer 2: Protein Check** | 6-frame conceptual translation + amino acid homology | **0% bypassed** |
+| Layer | Method | Evasion Success Rate (Out of 9 Trials*) | Details |
+| :--- | :--- | :---: | :---: |
+| **Layer 1: DNA Check** | Sliding-window Hamming distance on raw `.txt` sequence | **100% bypassed** | Mean Max DNA Similarity: 70.0% |
+| **Layer 2: Protein Check** | 6-frame conceptual translation + amino acid homology | **0% bypassed** | 100% structural matching |
 
 *\*Note: Empirical deductive hashing of the 9 trial payloads outputs verified they collapsed into precisely 3 mathematically distinct output sequence groups generated across the 3 unique codon maps.*
 

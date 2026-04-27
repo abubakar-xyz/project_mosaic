@@ -1,10 +1,10 @@
 # Project MOSAIC: Defensive Protein-Aware Screening for Benchtop Synthesizers
 
 ## Abstract
-Modern open-weight models allow non-experts to design and modify biological sequences via "context-scrubbed" multi-agent workflows. We demonstrate that LLMs can routinely evade standard DNA-level screening systems using synonymous codon substitution. To combat this, we release an open-source, Protein-Aware Mock Screener tool. We systematically generated 9 obfuscated synthesis payloads via cross-model LLM handoffs. While these scripts bypassed legacy DNA-level screening (100% evasion), our updated translation-aware screening tool caught 100% of adversarial payloads by examining the translated homology, reinforcing that modern defense must happen at the protein level.
+Modern frontier commercial LLMs allow non-experts to design and modify biological sequences via "context-scrubbed" multi-agent workflows. We demonstrate that LLMs can routinely evade standard DNA-level screening systems using synonymous codon substitution. To combat this, we release an open-source, Protein-Aware Mock Screener tool. We systematically generated 9 obfuscated synthesis payloads via cross-model LLM handoffs. While these scripts bypassed legacy DNA-level screening (100% evasion), our updated translation-aware screening tool caught 100% of adversarial payloads by examining the translated homology, reinforcing that modern defense must happen at the protein level.
 
 ## Introduction
-What is AIxBio? As AI continues to rapidly lower the barrier to biological engineering, traditional screening mechanisms are struggling to keep up. One particular vulnerability is the "multi-agent context scrub": a human can ask one LLM to generate a substitution matrix, scrub the intent, and use a second LLM to generate a python script to scramble a DNA fragment. Our project initially explored how well these multi-agent pipelines could generate outputs that evaded simple screening rules. 
+As AI continues to rapidly lower the barrier to biological engineering, traditional screening mechanisms are struggling to keep up. One particular vulnerability is the "multi-agent context scrub": a human can ask one LLM to generate a substitution matrix, scrub the intent, and use a second LLM to generate a python script to scramble a DNA fragment. Our project initially explored how well these multi-agent pipelines could generate outputs that evaded simple screening rules. 
 
 We found that while basic DNA screening fails miserably (0/9 payloads detected), simply upgrading screening to use 6-frame conceptual translation to the protein level provides an absolute defense against synonymous substitution attacks (9/9 payloads detected). This report details our mock red-teaming pipeline and the open-source defensive screener we built.
 
@@ -30,15 +30,15 @@ To maintain scientific rigor, we define "evasion" taxonomically:
 We constructed a modular Red/Blue pipeline testing both offense and defense:
 
 1.  **Red Team Generation Matrix (The Attack):**
-    *   **Node 1 (Bio-Linguist):** 3 frontier models (GPT-5.3, Claude Haiku 4.5, Gemini 3.1 Pro) generated synonymous codon substitution tables for our proxy payload (Green Fluorescent Protein / GFP).
+    *   **Node 1 (Bio-Linguist):** 3 frontier models (GPT-5.3, Claude Haiku 4.5, Gemini 3.1 Pro) generated synonymous codon substitution tables for our proxy payload (Green Fluorescent Protein / GFP). All prompts were executed at Temperature 0.7 to allow natural generative variation.
         *   *Artifact Note:* Upon analysis, the outputs from the varying Bio models collapsed into three effective equivalence classes (mappings). This mapping reuse means our 9 trials are not strictly independent; they demonstrate pipeline behavior and convergence rather than 9 unique creative exploits. Furthermore, the LLM metric of "uplift" only exists structurally in semantic compliance at this Node (defeating conversational intent classifiers by treating biology as code optimization), as the actual output is a trivial substitution dictionary.
-    *   **Node 2 (Evasion Coder):** With biological context scrubbed, the 3 models were given the mappings and asked to generate string-splitting and translation scripts. 
+    *   **Node 2 (Evasion Coder):** With biological context scrubbed, the 3 models were given the mappings and asked to generate string-splitting and translation scripts. Executed at Temperature 0 to ensure direct coding determinism.
         *   *LLM Utility Re-clarification:* This step represents trivial coding that requires no LLM at all; our finding isn't that LLMs are excellent at chunking DNA, but that laundering context across models serves as a mechanism to cleanly disassociate the Node 1 ask from the Node 2 task.
     *   **Execution:** 3x3 combinations resulted in 9 successful fragments using simple degeneracy heuristics (synonymous mutations). No higher-order biological reasoning (e.g., GC skewing, motif disruption) occurred.
 2.  **Blue Team Defensive Screener (The Defense):**
     *   We built `screener.py`, a layered screening tool to simulate defensive postures.
     *   *Layer 1 (Baseline DNA):* A frozen baseline checking for sliding-window Hamming distance against the wild-type string. Used to represent historical or naive text-based screening.
-    *   *Layer 2 (Protein Translation):* Performs dynamic DNA-to-Protein translation using the standard genetic code and checks for protein sequence homology (window size 10 AA at 90% identity). For highly-conserved motifs (such as our 238 AA GFP proxy run completely entirely by synonymous substitution), this Layer represents mathematical inevitability; it does not "learn" the obfuscation but unmasks it by functional design, proving the robustness of the translating paradigm over DNA similarity.
+    *   *Layer 2 (Protein Translation):* Performs dynamic DNA-to-Protein translation using the standard genetic code and checks for protein sequence homology (window size 10 AA at 85% identity). For highly-conserved motifs (such as our 238 AA GFP proxy run completely entirely by synonymous substitution), this Layer represents mathematical inevitability; it does not "learn" the obfuscation but unmasks it by functional design, proving the robustness of the translating paradigm over DNA similarity.
 3.  **Control Condition:**
     *   An explicit, single-session prompt (combining Node 1 intent and Node 2 execution commands) was fired against the 3 target models at Temp 0. To rule out fragile hallucinations or single-run volatility, we queried the prompt across three separate fresh sessions per model, affirming consistent refusal (100%) against single-prompt explicitly malicious framing.
 
@@ -70,6 +70,8 @@ What we **do not claim**:
 
 ## Practical Policy Recommendations
 The theoretical graph model illustrates that simply patching discrete model endpoints cannot shift the minimum cut of a fully-connected multi-agent ecosystem. Therefore, the minimum cut for biosecurity must reside at the physical interface.
+
+Commercial synthesis providers (Twist, IDT) already employ protein-level HMM screening; the unaddressed vulnerability is the growing ecosystem of decentralized benchtop synthesizers operating without equivalent controls. 
 
 For **Track 4 (Benchtop Synthesizers)**, we offer the following actionable policy:
 Benchtop hardware manufacturers should implement an **on-device hardware interlock** that requires a cryptographically signed API handshake with an approved central protein-homology screening service before physical synthesis begins. If offline operation is mandated, a robust 6-frame translational screener (such as Layer 2 of Project MOSAIC) must be embedded directly in the device firmware, blocking any sequence translating to >85% homology with regulated databases, rendering synonymous obfuscation mathematically irrelevant.
