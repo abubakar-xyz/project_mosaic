@@ -14,27 +14,29 @@ This project explicitly models how malicious users might split a dangerous reque
 
 ---
 
-## The Threat Model (Red Team)
+## The Threat Model (Red Team) & Scientific Nuance
 
 Current biosecurity evaluations often suffer from the "Single-Node Illusion." If an LLM refuses to design a pathogen, the system is considered safe. However, real-world adversaries use a fragmented ecosystem:
 1.  **Node 1 (Bio-Linguist):** Use a model to generate a synonymous codon substitution table for a target sequence, framed as a benign optimization task.
+    *   *Note on Model Independence:* Our 3x3 matrix resulted in only 3 unique codon mapping outputs, indicating mapping convergence and reuse among frontier models, reflecting behavior of the workflow itself, not independent generative capacity.
 2.  **Context Scrub:** Manually strip the biological context from the resulting dictionary.
-3.  **Node 2 (Evasion Coder):** Use a second model to write a "data obfuscation" script using the dictionary, framed as a pure linguistics task.
+    *   *Note on Causality:* It is the semantic laundering (stripping the "bio" intent away in favor of "linguistics") that defeats the guardrails, using workflow fragmentation as a vehicle.
+3.  **Node 2 (Evasion Coder):** Use a second model to write a "data obfuscation" script using the dictionary, applying basic degeneracy heuristics. No higher-order biological "reasoning" is occurring.
 
-*Note: To prevent infohazards, we used **Green Fluorescent Protein (GFP)**—a harmless, standard biological sequence—as our proxy payload to generate 9 empirical evasion trials across GPT-5.3, Claude Haiku 4.5, and Gemini 3.1 Pro.*
+*Note: To prevent infohazards, we used **Green Fluorescent Protein (GFP)**—a harmless, standard biological sequence—as our proxy payload to generate 9 empirical evasion trials across GPT-5.3, Claude Haiku 4.5, and Gemini 3.1 Pro. We explicitly acknowledge this proxy limits generalizability, as frontier models refuse actual pathogen generation dynamically.*
 
 ---
 
 ## The Defense Tool (Blue Team)
 
-Our contribution is `screener.py`, a two-layer lightweight screener suitable for integration into benchtop DNA synthesizers or open-source biosecurity pipelines.
+Our contribution is `screener.py`, a two-layer lightweight screener demonstrating our evaluation baseline. **All screening results are against a simplified model only, not a formal analysis of Twist or IDT commercial workflows.**
 
 | Layer | Method | Evasion Success Rate (Out of 9 Trials) |
 | :--- | :--- | :---: |
 | **Layer 1: DNA Check** | Sliding-window Hamming distance on raw `.txt` sequence | **100% (9/9 bypassed)** |
 | **Layer 2: Protein Check** | 6-frame conceptual translation + amino acid homology | **0% (0/9 bypassed)** |
 
-The results prove that while AI natively excels at syntactic obfuscation (DNA), biological function (Protein) remains conserved and highly detectable. Modern defense **must** happen at the protein level, and building this capability into decentralized synthesizers is paramount.
+The results prove that while AI natively excels at syntactic obfuscation (DNA) against naive legacy tools, biological function (Protein) remains conserved and highly detectable. Modern defense **must** happen at the protein level, and ensuring this capability exists locally in decentralized benchtop synthesizers is paramount.
 
 ---
 
