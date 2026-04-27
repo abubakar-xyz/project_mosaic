@@ -20,10 +20,10 @@ Current biosecurity evaluations often suffer from the "Single-Node Illusion." If
 1.  **Node 1 (Bio-Linguist):** Use a model to generate a synonymous codon substitution table for a target sequence, framed as a benign optimization task.
     *   *Note on Model Independence:* Our 3x3 matrix resulted in only 3 unique codon mapping outputs, indicating mapping convergence and reuse among frontier models, reflecting behavior of the workflow itself, not independent generative capacity.
 2.  **Context Scrub:** Manually strip the biological context from the resulting dictionary.
-    *   *Note on Causality:* It is the semantic laundering (stripping the "bio" intent away in favor of "linguistics") that defeats the guardrails, using workflow fragmentation as a vehicle.
-3.  **Node 2 (Evasion Coder):** Use a second model to write a "data obfuscation" script using the dictionary, applying basic degeneracy heuristics. No higher-order biological "reasoning" is occurring.
+    *   *Note on Causality:* It is the semantic laundering (stripping the "bio" intent away in favor of "linguistics") that defeats the guardrails, using workflow fragmentation as a vehicle. That is the true "LLM uplift" mechanism represented here.
+3.  **Node 2 (Evasion Coder):** Use a second model to write a "data obfuscation" script using the dictionary, applying basic degeneracy heuristics. No higher-order biological "reasoning" is occurring, and in fact, this entire step could be automated trivially in native python logic without an LLM altogether.
 
-*Note: To prevent infohazards, we used **Green Fluorescent Protein (GFP)**—a harmless, standard biological sequence—as our proxy payload to generate 9 empirical evasion trials across GPT-5.3, Claude Haiku 4.5, and Gemini 3.1 Pro. We explicitly acknowledge this proxy limits generalizability, as frontier models refuse actual pathogen generation dynamically.*
+*Note: To prevent infohazards, we used **Green Fluorescent Protein (GFP)**—a harmless, standard biological sequence—as our proxy payload to generate 9 empirical evasion trials across GPT-5.3, Claude Haiku 4.5, and Gemini 3.1 Pro. We explicitly acknowledge this proxy limits generalizability, as frontier models refuse actual pathogen generation dynamically. We tested against this hypothesis securely by verifying consistent control refusals against the "combined malicious" request 3x per frontier model.*
 
 ---
 
@@ -31,12 +31,14 @@ Current biosecurity evaluations often suffer from the "Single-Node Illusion." If
 
 Our contribution is `screener.py`, a two-layer lightweight screener demonstrating our evaluation baseline. **All screening results are against a simplified model only, not a formal analysis of Twist or IDT commercial workflows.**
 
-| Layer | Method | Evasion Success Rate (Out of 9 Trials) |
+| Layer | Method | Evasion Success Rate (Out of 9 Trials*) |
 | :--- | :--- | :---: |
-| **Layer 1: DNA Check** | Sliding-window Hamming distance on raw `.txt` sequence | **100% (9/9 bypassed)** |
-| **Layer 2: Protein Check** | 6-frame conceptual translation + amino acid homology | **0% (0/9 bypassed)** |
+| **Layer 1: DNA Check** | Sliding-window Hamming distance on raw `.txt` sequence | **100% bypassed** |
+| **Layer 2: Protein Check** | 6-frame conceptual translation + amino acid homology | **0% bypassed** |
 
-The results prove that while AI natively excels at syntactic obfuscation (DNA) against naive legacy tools, biological function (Protein) remains conserved and highly detectable. Modern defense **must** happen at the protein level, and ensuring this capability exists locally in decentralized benchtop synthesizers is paramount.
+*\*Note: Empirical deductive hashing of the 9 trial payloads outputs verified they collapsed into precisely 3 mathematically distinct output sequence groups generated across the 3 unique codon maps.*
+
+The results prove that while AI natively excels at syntactic obfuscation (DNA) against naive legacy tools, biological function (Protein) remains conserved and highly detectable. Modern defense **must** happen at the protein level. Our policy recommendation for Benchtop Synthesizer Manufacturers (Track 4) is the implementation of **hardware interlock mechanisms requiring 6-frame translation firmware checks exceeding 85% homology prior to physical sequencing capabilities enabling.**
 
 ---
 

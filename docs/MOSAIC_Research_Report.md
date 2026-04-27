@@ -31,13 +31,16 @@ We constructed a modular Red/Blue pipeline testing both offense and defense:
 
 1.  **Red Team Generation Matrix (The Attack):**
     *   **Node 1 (Bio-Linguist):** 3 frontier models (GPT-5.3, Claude Haiku 4.5, Gemini 3.1 Pro) generated synonymous codon substitution tables for our proxy payload (Green Fluorescent Protein / GFP).
-        *   *Artifact Note:* Upon analysis, the outputs from the varying Bio models collapsed into three effective equivalence classes (mappings). This mapping reuse means our 9 trials are not strictly independent; they demonstrate pipeline behavior and convergence rather than 9 unique creative exploits.
+        *   *Artifact Note:* Upon analysis, the outputs from the varying Bio models collapsed into three effective equivalence classes (mappings). This mapping reuse means our 9 trials are not strictly independent; they demonstrate pipeline behavior and convergence rather than 9 unique creative exploits. Furthermore, the LLM metric of "uplift" only exists structurally in semantic compliance at this Node (defeating conversational intent classifiers by treating biology as code optimization), as the actual output is a trivial substitution dictionary.
     *   **Node 2 (Evasion Coder):** With biological context scrubbed, the 3 models were given the mappings and asked to generate string-splitting and translation scripts. 
+        *   *LLM Utility Re-clarification:* This step represents trivial coding that requires no LLM at all; our finding isn't that LLMs are excellent at chunking DNA, but that laundering context across models serves as a mechanism to cleanly disassociate the Node 1 ask from the Node 2 task.
     *   **Execution:** 3x3 combinations resulted in 9 successful fragments using simple degeneracy heuristics (synonymous mutations). No higher-order biological reasoning (e.g., GC skewing, motif disruption) occurred.
 2.  **Blue Team Defensive Screener (The Defense):**
     *   We built `screener.py`, a layered screening tool to simulate defensive postures.
     *   *Layer 1 (Baseline DNA):* A frozen baseline checking for sliding-window Hamming distance against the wild-type string. Used to represent historical or naive text-based screening.
-    *   *Layer 2 (Protein Translation):* Performs dynamic DNA-to-Protein translation using the standard genetic code and checks for protein sequence homology. Used to represent modern, robust screening paradigms.
+    *   *Layer 2 (Protein Translation):* Performs dynamic DNA-to-Protein translation using the standard genetic code and checks for protein sequence homology (window size 10 AA at 90% identity). For highly-conserved motifs (such as our 238 AA GFP proxy run completely entirely by synonymous substitution), this Layer represents mathematical inevitability; it does not "learn" the obfuscation but unmasks it by functional design, proving the robustness of the translating paradigm over DNA similarity.
+3.  **Control Condition:**
+    *   An explicit, single-session prompt (combining Node 1 intent and Node 2 execution commands) was fired against the 3 target models at Temp 0. To rule out fragile hallucinations or single-run volatility, we queried the prompt across three separate fresh sessions per model, affirming consistent refusal (100%) against single-prompt explicitly malicious framing.
 
 ## Results
 Against the Layer 1 DNA Screener, the context-scrubbed evasion attacks achieved a **100% bypass rate (9/9 sequences evaded detection)**. The DNA sequences were heavily obfuscated.
@@ -62,7 +65,11 @@ What we **rigorously claim**:
 
 What we **do not claim**:
 1. That commercial synthesis screening is broadly bypassable via this method.
-2. That LLMs autonomously design effective biological evasion.
-3. That the observed pass/fail boundary generalizes beyond our simplified screener.
+2. That LLMs independently "reason" to autonomously design effective biological evasion.
+3. That our 9-trial matrix represents 9 unique biological exploits. Empirical hash-deduplication of the fragment text logs confirms our 9 nominally independent trials collapsed into exactly 3 unique sequence payloads, validating mapping convergence and pipeline behavior over generative creativity.
 
-This provides optimism: standard structural/protein-level screening remains highly robust against these low-effort proxy attacks. Future work should integrate our lightweight protein-aware screener directly into Benchtop DNA Synthesizer hardware logic (Track 4) to ensure on-device orders are screened translationally before printing occurs, bridging the gap between digital AI capabilities and physical synthesis.
+## Practical Policy Recommendations
+The theoretical graph model illustrates that simply patching discrete model endpoints cannot shift the minimum cut of a fully-connected multi-agent ecosystem. Therefore, the minimum cut for biosecurity must reside at the physical interface.
+
+For **Track 4 (Benchtop Synthesizers)**, we offer the following actionable policy:
+Benchtop hardware manufacturers should implement an **on-device hardware interlock** that requires a cryptographically signed API handshake with an approved central protein-homology screening service before physical synthesis begins. If offline operation is mandated, a robust 6-frame translational screener (such as Layer 2 of Project MOSAIC) must be embedded directly in the device firmware, blocking any sequence translating to >85% homology with regulated databases, rendering synonymous obfuscation mathematically irrelevant.
