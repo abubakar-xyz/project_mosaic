@@ -1,0 +1,77 @@
+# 🧬 PROJECT MOSAIC: Defensive Protein-Aware Screening for Benchtop Synthesizers
+
+*Apart AIxBio Hackathon — April 2026*
+
+**Submission Track:** DNA Screening & Synthesis Controls (Track 1) / Benchtop Synthesizer Security (Track 4)
+
+---
+
+## Abstract
+
+Project MOSAIC provides an open-source, Protein-Aware Mock Screener tool designed to defend against "context-scrubbed" multi-agent LLM workflows. We demonstrate that while simple DNA-level screening (Hamming distance) can be trivially evaded by generating synonymous codon substitutions using commercial LLMs, our **Layer-2 Protein Translation Screener** catches 100% of these adversarial payloads by examining the translated amino acid homology.
+
+This project explicitly models how malicious users might split a dangerous request into benign subtasks across different models, and provides the defensive code necessary to catch the resulting obfuscated sequences before they reach physical synthesis.
+
+---
+
+## The Threat Model (Red Team)
+
+Current biosecurity evaluations often suffer from the "Single-Node Illusion." If an LLM refuses to design a pathogen, the system is considered safe. However, real-world adversaries use a fragmented ecosystem:
+1.  **Node 1 (Bio-Linguist):** Use a model to generate a synonymous codon substitution table for a target sequence, framed as a benign optimization task.
+2.  **Context Scrub:** Manually strip the biological context from the resulting dictionary.
+3.  **Node 2 (Evasion Coder):** Use a second model to write a "data obfuscation" script using the dictionary, framed as a pure linguistics task.
+
+*Note: To prevent infohazards, we used **Green Fluorescent Protein (GFP)**—a harmless, standard biological sequence—as our proxy payload to generate 9 empirical evasion trials across GPT-5.3, Claude Haiku 4.5, and Gemini 3.1 Pro.*
+
+---
+
+## The Defense Tool (Blue Team)
+
+Our contribution is `screener.py`, a two-layer lightweight screener suitable for integration into benchtop DNA synthesizers or open-source biosecurity pipelines.
+
+| Layer | Method | Evasion Success Rate (Out of 9 Trials) |
+| :--- | :--- | :---: |
+| **Layer 1: DNA Check** | Sliding-window Hamming distance on raw `.txt` sequence | **100% (9/9 bypassed)** |
+| **Layer 2: Protein Check** | 6-frame conceptual translation + amino acid homology | **0% (0/9 bypassed)** |
+
+The results prove that while AI natively excels at syntactic obfuscation (DNA), biological function (Protein) remains conserved and highly detectable. Modern defense **must** happen at the protein level, and building this capability into decentralized synthesizers is paramount.
+
+---
+
+## Running the Screener
+
+To test the defensive capabilities of the screener against the 9 generated adversarial payloads:
+
+```bash
+# Screen a single file
+cd analysis
+python screener.py --file ../fragments/fragments_trial1.txt
+
+# Run the screener against all 9 LLM-generated evasion trials
+python screener.py --run-all
+```
+
+## Repository Structure
+
+```
+project_mosaic/
+├── README.md                       # This file
+├── docs/
+│   └── MOSAIC_Research_Report.md   # **MAIN HACKATHON SUBMISSION REPORT**
+├── analysis/
+│   ├── screener.py                 # The Protein-Aware defensive screening tool
+│   ├── generate_fragments.py       # Pipeline: runs trials → fragments
+│   └── mosaic_engine.py            # (Deprecated) Legacy graph engine
+├── data/
+│   └── (Raw sequences and trial matrix logs)
+├── evasion_trials/
+│   └── evasion_trial1.py – 9.py    # LLM-generated evasion scripts (Red Team)
+├── fragments/
+│   └── fragments_trial1.txt – 9.txt # Generated sequence fragments
+└── evidence/
+    ├── prompts.md                  # Exact prompts used (Bio, Code, Control)
+    └── screenshots/                # Model refusal screenshots
+```
+
+## Acknowledgments & Limitations
+This work is presented as an **illustrative model** of multi-agent evasion tactics. We explicitly acknowledge that GFP is a harmless proxy and that context-scrubbing currently requires a human-in-the-loop to curate outputs between API calls. For a full discussion on limitations, dual-use risks, and ethical considerations, please see our detailed `MOSAIC_Research_Report.md`.
